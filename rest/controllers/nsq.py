@@ -1,17 +1,17 @@
-
-import json
-import argparse
-import datetime
+import requests
 import time
 
-from rest.helpers import mongo
+from datetime import datetime
+from rest.exceptions import BadRequest
 
 
 class NsqController(object):
 
 	def getNsqStats(self, topic, wb, channel):
-		self.validate_argument(topic)
+		
+		# self.validate_argument(topic)
 		response = self.request_to_nsq(topic, channel)
+
 		# save_to_db(response)
 		self.send_to_slack(wb, topic, response)
 
@@ -30,7 +30,6 @@ class NsqController(object):
 		)
 
 		response = requests.get('http://159.65.12.8:4151/stats', params=params)
-
 		result = response.json()
 		today = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 		try:
@@ -64,7 +63,7 @@ class NsqController(object):
 			in_flight_count = 0
 
 
-		response = {
+		final_response = {
 			"total_message": total_message,
 			"depth": depth,
 			"connections": connections,
@@ -73,8 +72,9 @@ class NsqController(object):
 			"in_flight_count": in_flight_count,
 			"date": today
 		}
+		
 
-		return response
+		return final_response
 
 	def save_to_db(self, response):
 		# SAVE TO DB
@@ -84,7 +84,6 @@ class NsqController(object):
 		result = db.daily_stat.insert_one(response)
 
 	def send_to_slack(self, wb, topic, response):
-
 		if wb:
 			host_slack = wb
 		else:
@@ -101,10 +100,12 @@ class NsqController(object):
 					"fallback": "New NSQ Stats",
 					"color": "#2eb886",
 					"title": topic,
-					"text": "total_message: {},\ndepth: {},\nconnections: {},\nrequeue_count: {},\ntimeout_count: {},\nin_flight_count: {},\ndate: {}".format(response["total_message"], response["depth"], response["connections"], response["requeue_count"], response["timeout_count"], response["in_flight_count"], response["today"]),
+					"text": "total_message: {},\ndepth: {},\nconnections: {},\nrequeue_count: {},\ntimeout_count: {},\nin_flight_count: {},\ndate: {}".format(response["total_message"], response["depth"], response["connections"], response["requeue_count"], response["timeout_count"], response["in_flight_count"], response["date"]),
 					"ts": time.time()
 				}
 			]
 		}
+
+
 
 		requests.post(host_slack, headers=headers, json=attachment)	

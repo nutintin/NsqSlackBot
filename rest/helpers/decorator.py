@@ -32,10 +32,9 @@ def _validate_app_secret_key():
 
 
 def _validate_nsq():
-    print(request.form)
     is_token_valid = request.form['token'] == current_app.config['SLACK_VERIFICATION_TOKEN']
     is_team_id_valid = request.form['team_id'] == current_app.config['SLACK_TEAM_ID']
-    print(request.form)
+
     if not is_token_valid or not is_team_id_valid:
         raise BadRequest("User doesn't have permissions to take this actions")
 
