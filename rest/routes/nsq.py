@@ -14,7 +14,8 @@ def get_campaign_nsq_stats_data():
 
     topic = "go_sync_campaign"  # get managix ad id from form ad_id
     wb = request.form.get("response_url")
-    channel = request.form.get("channel")
+    channel = request.form.get("channel", "job")
+    print(wb, channel)
 
     nsqcontroller.getNsqStats(topic, wb, channel)
 
