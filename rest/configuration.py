@@ -68,7 +68,7 @@ class Configuration(object):
     # SLACK
     SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID")
     SLACK_VERIFICATION_TOKEN = "leIQIpxq12xdFvv3ohctuB15"
-    SLACK_TEAM_ID = "D1QQ90CLV"
+    SLACK_TEAM_ID = "T07U44ADA"
     SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET")
     SLACK_HOST = os.getenv("SLACK_HOST", "https://slack.com/api")
     SLACK_REQUEST_TIMEOUT = 60
