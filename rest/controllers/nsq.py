@@ -1,6 +1,7 @@
 import requests
 import time
 
+from flask import current_app
 from datetime import datetime
 from rest.exceptions import BadRequest
 
@@ -29,7 +30,7 @@ class NsqController(object):
 			('channel', channel),
 		)
 
-		response = requests.get('http://159.65.12.8:4151/stats', params=params)
+		response = requests.get(current_app.config["NSQ_STATS_URL"], params=params)
 		result = response.json()
 		today = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 		try:
@@ -87,7 +88,7 @@ class NsqController(object):
 		if wb:
 			host_slack = wb
 		else:
-			host_slack = "https://hooks.slack.com/services/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"
+			host_slack = current_app.config["DEFAULT_SLACK_CHANNEL"]
 
 		headers = {
 			"Content-Type": "application/json"
